@@ -1,54 +1,549 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Device Dokan - Premium Smartphone Store</title>
-<script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f97316">
+  <meta name="description" content="Device Dokan - Premium Smartphone Store in Bangladesh. iPhone, Samsung, Xiaomi, OnePlus, iQOO and more.">
+  <title>Device Dokan | Premium Smartphone Store</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: Arial, "Noto Sans Bengali", sans-serif; }
+    .glass { background: rgba(255,255,255,.88); backdrop-filter: blur(12px); }
+    .product-card { transition: transform .25s ease, box-shadow .25s ease; }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 45px rgba(0,0,0,.12); }
+    .hero-title { letter-spacing: -0.04em; }
+  </style>
 </head>
-<body class="bg-gray-50">
-<div class="max-w-7xl mx-auto bg-white shadow-2xl min-h-screen">
-<header class="flex flex-col sm:flex-row justify-between items-center gap-4 p-6 border-b">
- <div class="text-center sm:text-left">
-  <img src="logo.png" alt="Device Dokan Logo" class="w-28 h-auto mx-auto sm:mx-0">
-  <p class="text-gray-500 text-sm">All Brand Mobile Collection • Panthapath, Dhaka</p>
- </div>
- <div class="flex gap-3">
-  <a href="https://www.facebook.com/share/1AV399GbMk/" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-2xl shadow">Facebook Page</a>
-  <a href="https://wa.me/8801336056864" class="border border-orange-400 text-orange-500 px-4 py-2 rounded-2xl">WhatsApp</a>
- </div>
-</header>
-<section class="px-6 py-16 max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center">
- <div>
-  <h2 class="text-5xl font-bold leading-tight">Latest Smartphones <br> With Trusted Service</h2>
-  <p class="mt-6 text-lg text-gray-600 leading-8">Device Dokan এ পাবেন iPhone, Samsung, Xiaomi, OnePlus, iQOO সহ সকল জনপ্রিয় স্মার্টফোনের বেস্ট কালেকশন।</p>
-  <div class="flex gap-4 mt-8 flex-wrap">
-   <a href="#products" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-2xl shadow-lg text-lg">Shop Now</a>
-   <a href="https://wa.me/8801336056864" class="border border-orange-500 text-orange-500 px-6 py-3 rounded-2xl text-lg">Contact Us</a>
-  </div>
- </div>
- <div class="relative"><div class="bg-orange-500 rounded-[40px] p-8 shadow-2xl rotate-2"><div class="bg-orange-100 rounded-3xl h-[450px] w-full flex items-center justify-center"><span class="text-8xl">📱</span></div></div></div>
-</section>
-<section id="products" class="max-w-7xl mx-auto px-6 py-14">
- <div class="flex items-center justify-between mb-10"><div><h3 class="text-4xl font-bold">Featured Devices</h3><p class="text-gray-500 mt-2">Best selling smartphones</p></div></div>
- <div id="productGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
- <p id="empty" class="hidden text-center text-gray-500 py-10">কোনো product বর্তমানে available নেই।</p>
-</section>
-<footer class="bg-black text-gray-300 py-10 mt-10"><div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-5"><div><h4 class="text-2xl font-bold text-orange-500">Device Dokan</h4><p class="text-sm text-gray-500 mt-2">Premium Smartphone Store in Bangladesh</p></div><div class="text-sm text-gray-400"><p>WhatsApp: 01336056864</p><p>Address: Bashundhara Market, Panthapath, Dhaka</p></div><div class="flex gap-5 text-sm"><a href="#">Home</a><a href="#products">Products</a><a href="https://wa.me/8801336056864">Contact</a></div></div></footer>
-<a href="https://wa.me/8801336056864" class="fixed bottom-6 right-6 bg-green-500 text-white px-5 py-4 rounded-full shadow-2xl text-lg font-bold z-50">💬 WhatsApp Chat</a>
+
+<body class="bg-gray-50 text-gray-900">
+
+<div class="max-w-7xl mx-auto bg-white shadow-2xl min-h-screen overflow-hidden">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 glass border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8 py-4">
+      <div class="flex flex-col lg:flex-row justify-between items-center gap-5">
+
+        <!-- BRAND -->
+        <div class="flex items-center gap-4 w-full lg:w-auto">
+          <img
+            src="logo.png"
+            alt="Device Dokan Logo"
+            class="w-24 sm:w-28 h-auto shrink-0"
+            onerror="this.style.display='none'"
+          >
+
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-gray-950">
+              DEVICE <span class="text-orange-500">DOKAN</span>
+            </h1>
+            <p class="text-sm font-semibold text-gray-600 mt-0.5">
+              Premium Smartphone Store
+            </p>
+            <p class="text-xs sm:text-sm text-gray-400 mt-1">
+              Your Trusted Mobile Destination • Panthapath, Dhaka
+            </p>
+          </div>
+        </div>
+
+        <!-- HEADER BUTTONS -->
+        <div class="flex gap-3 w-full lg:w-auto">
+          <a
+            href="https://www.facebook.com/share/1AV399GbMk/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex-1 lg:flex-none text-center bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-2xl shadow-lg font-semibold transition"
+          >
+            Facebook Page
+          </a>
+
+          <a
+            href="https://wa.me/8801336056864"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex-1 lg:flex-none text-center border-2 border-orange-400 text-orange-500 hover:bg-orange-50 px-5 py-3 rounded-2xl font-semibold transition"
+          >
+            WhatsApp
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+
+  <!-- HERO -->
+  <section class="relative px-6 sm:px-10 lg:px-14 py-14 sm:py-20">
+    <div class="absolute inset-0 bg-gradient-to-br from-orange-50 via-white to-gray-50 pointer-events-none"></div>
+
+    <div class="relative grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+      <div>
+        <div class="inline-flex items-center gap-2 bg-orange-100 text-orange-600 px-4 py-2 rounded-full text-sm font-bold mb-6">
+          <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+          Latest Smartphone Collection
+        </div>
+
+        <h2 class="hero-title text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.02]">
+          Latest Smartphones
+          <span class="block text-orange-500">With Trusted</span>
+          <span class="block">Service.</span>
+        </h2>
+
+        <p class="mt-7 text-base sm:text-lg text-gray-600 leading-8 max-w-2xl">
+          Device Dokan-এ পাবেন iPhone, Samsung, Xiaomi, OnePlus, iQOO,
+          Google Pixel সহ সকল জনপ্রিয় স্মার্টফোনের বাছাই করা Premium Collection।
+          সঠিক পণ্য, সঠিক দাম এবং বিশ্বস্ত সার্ভিস—সব এক জায়গায়।
+        </p>
+
+        <div class="flex flex-wrap gap-4 mt-8">
+          <a
+            href="#products"
+            class="bg-orange-500 hover:bg-orange-600 text-white px-7 py-4 rounded-2xl shadow-xl font-bold text-lg transition"
+          >
+            Shop Now →
+          </a>
+
+          <a
+            href="https://wa.me/8801336056864"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="border-2 border-orange-500 text-orange-500 hover:bg-orange-50 px-7 py-4 rounded-2xl font-bold text-lg transition"
+          >
+            Contact Us
+          </a>
+        </div>
+
+        <div class="flex flex-wrap gap-6 mt-9 text-sm text-gray-500">
+          <span>✓ Premium Collection</span>
+          <span>✓ Trusted Service</span>
+          <span>✓ Easy WhatsApp Order</span>
+        </div>
+      </div>
+
+
+      <!-- HERO VISUAL -->
+      <div class="relative">
+        <div class="absolute -top-8 -right-8 w-32 h-32 bg-orange-200 rounded-full blur-2xl opacity-60"></div>
+        <div class="absolute -bottom-8 -left-8 w-40 h-40 bg-orange-100 rounded-full blur-3xl"></div>
+
+        <div class="relative bg-orange-500 rounded-[42px] p-4 sm:p-7 shadow-2xl rotate-1">
+          <div class="bg-white rounded-[34px] min-h-[360px] sm:min-h-[470px] flex flex-col items-center justify-center text-center p-8">
+            <div class="text-8xl sm:text-[120px] mb-6">📱</div>
+
+            <p class="text-orange-500 font-black text-2xl sm:text-3xl">
+              DEVICE DOKAN
+            </p>
+
+            <p class="text-gray-500 mt-3">
+              Premium Smartphones • Trusted Service
+            </p>
+
+            <div class="mt-6 px-5 py-2 rounded-full bg-orange-50 text-orange-600 text-sm font-bold">
+              Panthapath, Dhaka
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- PRODUCTS -->
+  <section id="products" class="px-6 sm:px-10 lg:px-14 py-14 bg-gray-50">
+
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+      <div>
+        <p class="text-orange-500 font-bold uppercase tracking-widest text-sm">
+          Our Collection
+        </p>
+
+        <h3 class="text-4xl sm:text-5xl font-black mt-2">
+          Featured Devices
+        </h3>
+
+        <p class="text-gray-500 mt-3">
+          Latest and best-selling smartphones
+        </p>
+      </div>
+
+      <a
+        href="https://wa.me/8801336056864"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-orange-500 font-bold hover:text-orange-600"
+      >
+        Need help choosing? →
+      </a>
+    </div>
+
+    <div
+      id="productGrid"
+      class="grid sm:grid-cols-2 lg:grid-cols-3 gap-7"
+    ></div>
+
+    <div
+      id="empty"
+      class="hidden text-center py-16"
+    >
+      <div class="text-6xl mb-4">📱</div>
+      <h4 class="text-2xl font-bold text-gray-700">
+        বর্তমানে কোনো Product Available নেই
+      </h4>
+      <p class="text-gray-500 mt-2">
+        নতুন Product-এর জন্য WhatsApp-এ যোগাযোগ করুন।
+      </p>
+    </div>
+
+  </section>
+
+
+  <!-- TRUST SECTION -->
+  <section class="px-6 sm:px-10 lg:px-14 py-14 bg-white">
+    <div class="grid md:grid-cols-3 gap-6">
+
+      <div class="rounded-3xl border border-gray-100 p-7 shadow-sm">
+        <div class="text-3xl mb-4">🛡️</div>
+        <h4 class="text-xl font-bold">Trusted Service</h4>
+        <p class="text-gray-500 mt-2 leading-7">
+          Customer satisfaction এবং বিশ্বস্ত সার্ভিসকে আমরা সর্বোচ্চ গুরুত্ব দিই।
+        </p>
+      </div>
+
+      <div class="rounded-3xl border border-gray-100 p-7 shadow-sm">
+        <div class="text-3xl mb-4">📱</div>
+        <h4 class="text-xl font-bold">Premium Collection</h4>
+        <p class="text-gray-500 mt-2 leading-7">
+          জনপ্রিয় Brand-এর নতুন ও আকর্ষণীয় Smartphone Collection এক জায়গায়।
+        </p>
+      </div>
+
+      <div class="rounded-3xl border border-gray-100 p-7 shadow-sm">
+        <div class="text-3xl mb-4">💬</div>
+        <h4 class="text-xl font-bold">Easy Ordering</h4>
+        <p class="text-gray-500 mt-2 leading-7">
+          পছন্দের Product-এর Order Now বাটনে ক্লিক করে সরাসরি WhatsApp-এ যোগাযোগ করুন।
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="bg-black text-gray-300 py-12">
+    <div class="max-w-7xl mx-auto px-6 sm:px-10">
+
+      <div class="grid md:grid-cols-3 gap-10">
+
+        <div>
+          <h4 class="text-3xl font-black text-orange-500">
+            DEVICE DOKAN
+          </h4>
+
+          <p class="text-gray-400 mt-3 leading-7">
+            Premium Smartphone Store in Bangladesh.
+            Your trusted destination for popular smartphones.
+          </p>
+        </div>
+
+        <div>
+          <h5 class="text-white font-bold text-lg mb-4">
+            Contact
+          </h5>
+
+          <p class="text-gray-400 mb-2">
+            WhatsApp: 01336056864
+          </p>
+
+          <p class="text-gray-400">
+            Bashundhara Market, Panthapath, Dhaka
+          </p>
+        </div>
+
+        <div>
+          <h5 class="text-white font-bold text-lg mb-4">
+            Quick Links
+          </h5>
+
+          <div class="flex flex-col gap-3">
+            <a href="#" class="hover:text-orange-500 transition">Home</a>
+            <a href="#products" class="hover:text-orange-500 transition">Products</a>
+            <a
+              href="https://www.facebook.com/share/1AV399GbMk/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-orange-500 transition"
+            >
+              Facebook
+            </a>
+            <a
+              href="https://wa.me/8801336056864"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-orange-500 transition"
+            >
+              WhatsApp
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="border-t border-gray-800 mt-10 pt-6 text-center text-sm text-gray-500">
+        © <span id="year"></span> Device Dokan. All Rights Reserved.
+      </div>
+
+    </div>
+  </footer>
+
+
+  <!-- FLOATING WHATSAPP -->
+  <a
+    href="https://wa.me/8801336056864"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="fixed bottom-5 right-5 sm:bottom-7 sm:right-7 z-50 bg-green-500 hover:bg-green-600 text-white px-5 py-4 rounded-full shadow-2xl font-bold flex items-center gap-2 transition"
+    aria-label="WhatsApp Chat"
+  >
+    <span class="text-xl">💬</span>
+    <span>WhatsApp Chat</span>
+  </a>
+
 </div>
+
+
 <script>
-const WA='8801336056864';
-const defaults=[
-{id:'1',name:'iPhone 17 Pro Max',price:'189999',storage:'256GB',ram:'12GB',color:'Natural Titanium',stock:true,description:'Premium iPhone'},
-{id:'2',name:'Samsung S26 Ultra',price:'159999',storage:'256GB',ram:'12GB',color:'Black',stock:true,description:'Samsung flagship'},
-{id:'3',name:'iQOO 15',price:'77000',storage:'256GB',ram:'12GB',color:'Black',stock:true,description:'Powerful performance phone'},
-{id:'4',name:'Xiaomi 16 Pro',price:'69999',storage:'256GB',ram:'12GB',color:'Black',stock:true,description:'Xiaomi flagship'},
-{id:'5',name:'OnePlus 14',price:'84999',storage:'256GB',ram:'12GB',color:'Black',stock:true,description:'OnePlus flagship'},
-{id:'6',name:'Google Pixel 10',price:'92000',storage:'256GB',ram:'12GB',color:'Black',stock:true,description:'Google Pixel'}];
-function products(){try{let x=localStorage.getItem('deviceDokanProducts');if(x)return JSON.parse(x)||[];}catch(e){} return defaults;}
-function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
-function order(p){let msg=`আমি ${p.name} অর্ডার করতে চাই।\nPrice: ৳${Number(p.price||0).toLocaleString('en-IN')}\nStorage: ${p.storage||'N/A'}\nRAM: ${p.ram||'N/A'}\nColor: ${p.color||'N/A'}`;window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');}
-function render(){let grid=document.getElementById('productGrid'), empty=document.getElementById('empty');let ps=products().filter(p=>p.stock!==false);grid.innerHTML='';empty.classList.toggle('hidden',ps.length>0);ps.forEach(p=>{let c=document.createElement('div');c.className='bg-white rounded-[30px] shadow-lg p-6 hover:scale-105 transition';let img=p.image?`<img src="${p.image}" class="w-full h-full object-contain" alt="${esc(p.name)}">`:`<span class="text-6xl">📱</span>`;c.innerHTML=`<div class="bg-orange-100 rounded-3xl h-56 flex items-center justify-center overflow-hidden">${img}</div><h4 class="text-2xl font-bold mt-6">${esc(p.name)}</h4><p class="text-orange-500 text-xl font-semibold mt-2">৳${Number(p.price||0).toLocaleString('en-IN')}</p><p class="text-gray-500 text-sm mt-2">${esc(p.storage||'')} ${p.ram?'• '+esc(p.ram):''} ${p.color?'• '+esc(p.color):''}</p><p class="text-gray-600 mt-2">${esc(p.description||'')}</p><button class="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-2xl" onclick="order(${JSON.stringify(p).replace(/</g,'\\u003c')})">Order Now</button>`;grid.appendChild(c);});}
-render();
+  const WA = '8801336056864';
+
+  /*
+    IMPORTANT:
+    admin.html যদি deviceDokanProducts নামে localStorage-এ product save করে,
+    এই index.html সেই product automatically দেখাবে।
+  */
+
+  const defaults = [
+    {
+      id: '1',
+      name: 'iPhone 17 Pro Max',
+      price: '189999',
+      storage: '256GB',
+      ram: '12GB',
+      color: 'Natural Titanium',
+      stock: true,
+      description: 'Premium iPhone'
+    },
+    {
+      id: '2',
+      name: 'Samsung S26 Ultra',
+      price: '159999',
+      storage: '256GB',
+      ram: '12GB',
+      color: 'Black',
+      stock: true,
+      description: 'Samsung flagship'
+    },
+    {
+      id: '3',
+      name: 'iQOO 15',
+      price: '77000',
+      storage: '256GB',
+      ram: '12GB',
+      color: 'Black',
+      stock: true,
+      description: 'Powerful performance phone'
+    },
+    {
+      id: '4',
+      name: 'Xiaomi 16 Pro',
+      price: '69999',
+      storage: '256GB',
+      ram: '12GB',
+      color: 'Black',
+      stock: true,
+      description: 'Xiaomi flagship'
+    },
+    {
+      id: '5',
+      name: 'OnePlus 14',
+      price: '84999',
+      storage: '256GB',
+      ram: '12GB',
+      color: 'Black',
+      stock: true,
+      description: 'OnePlus flagship'
+    },
+    {
+      id: '6',
+      name: 'Google Pixel 10',
+      price: '92000',
+      storage: '256GB',
+      ram: '12GB',
+      color: 'Black',
+      stock: true,
+      description: 'Google Pixel'
+    }
+  ];
+
+
+  function products() {
+    try {
+      const saved = localStorage.getItem('deviceDokanProducts');
+
+      if (saved) {
+        const parsed = JSON.parse(saved);
+
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+      }
+    } catch (error) {
+      console.error('Product data error:', error);
+    }
+
+    return defaults;
+  }
+
+
+  function esc(value) {
+    return String(value ?? '').replace(
+      /[&<>"']/g,
+      function (match) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        }[match];
+      }
+    );
+  }
+
+
+  function order(product) {
+    const price = Number(product.price || 0).toLocaleString('en-IN');
+
+    const message =
+      `আমি ${product.name} অর্ডার করতে চাই।\n` +
+      `Price: ৳${price}\n` +
+      `Storage: ${product.storage || 'N/A'}\n` +
+      `RAM: ${product.ram || 'N/A'}\n` +
+      `Color: ${product.color || 'N/A'}`;
+
+    const url =
+      'https://wa.me/' +
+      WA +
+      '?text=' +
+      encodeURIComponent(message);
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
+
+  function render() {
+    const grid = document.getElementById('productGrid');
+    const empty = document.getElementById('empty');
+
+    const ps = products().filter(function (product) {
+      return product && product.stock !== false;
+    });
+
+    grid.innerHTML = '';
+
+    empty.classList.toggle('hidden', ps.length > 0);
+
+    ps.forEach(function (product) {
+
+      const card = document.createElement('div');
+
+      card.className =
+        'product-card bg-white rounded-[30px] shadow-md border border-gray-100 p-5 overflow-hidden';
+
+      let imageHTML = '';
+
+      if (product.image) {
+        imageHTML =
+          `<img
+            src="${esc(product.image)}"
+            class="w-full h-full object-contain p-4"
+            alt="${esc(product.name)}"
+            loading="lazy"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+          >
+          <span class="hidden text-7xl items-center justify-center w-full h-full">📱</span>`;
+      } else {
+        imageHTML =
+          `<span class="text-7xl">📱</span>`;
+      }
+
+      const details = [
+        product.storage ? esc(product.storage) : '',
+        product.ram ? esc(product.ram) : '',
+        product.color ? esc(product.color) : ''
+      ].filter(Boolean).join(' • ');
+
+      card.innerHTML = `
+        <div class="bg-orange-50 rounded-[24px] h-60 flex items-center justify-center overflow-hidden">
+          ${imageHTML}
+        </div>
+
+        <div class="pt-5">
+          <div class="flex items-start justify-between gap-3">
+            <h4 class="text-xl sm:text-2xl font-black leading-tight">
+              ${esc(product.name)}
+            </h4>
+
+            <span class="shrink-0 text-xs font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full">
+              In Stock
+            </span>
+          </div>
+
+          <p class="text-orange-500 text-2xl font-black mt-3">
+            ৳${Number(product.price || 0).toLocaleString('en-IN')}
+          </p>
+
+          ${
+            details
+              ? `<p class="text-gray-500 text-sm mt-2">${details}</p>`
+              : ''
+          }
+
+          ${
+            product.description
+              ? `<p class="text-gray-600 mt-3 leading-6">${esc(product.description)}</p>`
+              : ''
+          }
+
+          <button
+            type="button"
+            class="mt-5 w-full bg-orange-500 hover:bg-orange-600 text-white py-3.5 rounded-2xl font-bold shadow-lg transition"
+          >
+            Order Now • WhatsApp
+          </button>
+        </div>
+      `;
+
+      const button = card.querySelector('button');
+
+      button.addEventListener('click', function () {
+        order(product);
+      });
+
+      grid.appendChild(card);
+    });
+  }
+
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  render();
 </script>
-</body></html>
+
+</body>
+</html>
