@@ -1,72 +1,602 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Device Dokan Admin</title><script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#f97316">
+  <meta name="description" content="Device Dokan Admin Panel - Product Management">
+  <title>Device Dokan Admin | Product Management</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: Arial, "Noto Sans Bengali", sans-serif; }
+    .glass { background: rgba(255,255,255,.90); backdrop-filter: blur(14px); }
+    .card { box-shadow: 0 12px 35px rgba(0,0,0,.07); }
+    .input { transition: border-color .2s ease, box-shadow .2s ease; }
+    .input:focus { outline: none; border-color: #f97316; box-shadow: 0 0 0 3px rgba(249,115,22,.12); }
+  </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-<div id="login" class="min-h-screen flex items-center justify-center p-5">
- <form onsubmit="login(event)" class="bg-white w-full max-w-sm p-7 rounded-3xl shadow-xl">
-  <h1 class="text-2xl font-bold">Device Dokan Admin</h1>
-  <p class="text-gray-500 mt-1 mb-6">Product Management</p>
-  <input id="user" class="w-full border rounded-xl p-3 mb-3" placeholder="Username" required>
-  <input id="pass" type="password" class="w-full border rounded-xl p-3 mb-4" placeholder="Password" required>
-  <button class="w-full bg-orange-500 text-white p-3 rounded-xl font-semibold">Login</button>
-  <p id="err" class="text-red-500 text-sm mt-3"></p>
- </form>
-</div>
-<div id="app" class="hidden max-w-6xl mx-auto p-5">
- <div class="flex justify-between items-center mb-6">
-  <div><h1 class="text-3xl font-bold">Admin Panel</h1><p class="text-gray-500">Product Management</p></div>
-  <div class="flex gap-2"><a href="index.html" target="_blank" class="border px-4 py-2 rounded-xl bg-white">Website</a><button onclick="logout()" class="bg-gray-900 text-white px-4 py-2 rounded-xl">Logout</button></div>
- </div>
- <div class="grid lg:grid-cols-3 gap-6">
-  <form id="productForm" onsubmit="saveProduct(event)" class="bg-white p-6 rounded-3xl shadow lg:col-span-1">
-   <h2 id="formTitle" class="text-xl font-bold mb-4">Add Product</h2>
-   <input type="hidden" id="id">
-   <label class="text-sm">Product Name</label><input id="name" required class="w-full border rounded-xl p-3 mb-3">
-   <label class="text-sm">Price</label><input id="price" type="number" required class="w-full border rounded-xl p-3 mb-3">
-   <label class="text-sm">Storage</label><input id="storage" placeholder="256GB" class="w-full border rounded-xl p-3 mb-3">
-   <label class="text-sm">RAM</label><input id="ram" placeholder="12GB" class="w-full border rounded-xl p-3 mb-3">
-   <label class="text-sm">Color</label><input id="color" class="w-full border rounded-xl p-3 mb-3">
-   <label class="text-sm">Description</label><textarea id="description" class="w-full border rounded-xl p-3 mb-3"></textarea>
-   <label class="flex items-center gap-2 mb-3"><input id="stock" type="checkbox" checked> In Stock</label>
-   <label class="text-sm">Product Image</label><input id="imageFile" type="file" accept="image/*" class="w-full mb-4">
-   <div class="flex gap-2"><button class="flex-1 bg-orange-500 text-white p-3 rounded-xl font-semibold">Save Product</button><button type="button" onclick="resetForm()" class="px-4 border rounded-xl">Clear</button></div>
-  </form>
-  <div class="bg-white p-6 rounded-3xl shadow lg:col-span-2">
-   <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">Products</h2><span id="count" class="text-gray-500"></span></div>
-   <div id="list" class="space-y-3"></div>
+
+<body class="bg-gray-50 text-gray-900">
+
+  <!-- LOGIN -->
+  <main id="login" class="min-h-screen bg-gradient-to-br from-orange-50 via-white to-gray-100 flex items-center justify-center p-5">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-7">
+        <img
+          src="logo.png"
+          alt="Device Dokan Logo"
+          class="w-28 mx-auto mb-4"
+          onerror="this.style.display='none'"
+        >
+        <h1 class="text-3xl font-black">
+          DEVICE <span class="text-orange-500">DOKAN</span>
+        </h1>
+        <p class="text-gray-500 mt-1">Premium Smartphone Store</p>
+      </div>
+
+      <form id="loginForm" class="bg-white rounded-[30px] p-7 sm:p-9 card border border-gray-100">
+        <div class="mb-6">
+          <h2 class="text-2xl font-black">Admin Login</h2>
+          <p class="text-gray-500 mt-1">Product Management Panel</p>
+        </div>
+
+        <label for="user" class="text-sm font-bold text-gray-700">Admin Email</label>
+        <input
+          id="user"
+          type="email"
+          autocomplete="email"
+          placeholder="admin@example.com"
+          required
+          class="input w-full border border-gray-200 rounded-2xl p-3.5 mt-2 mb-4"
+        >
+
+        <label for="pass" class="text-sm font-bold text-gray-700">Password</label>
+        <input
+          id="pass"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Password"
+          required
+          class="input w-full border border-gray-200 rounded-2xl p-3.5 mt-2 mb-5"
+        >
+
+        <button
+          id="loginButton"
+          type="submit"
+          class="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-60 text-white p-3.5 rounded-2xl font-bold shadow-lg transition"
+        >
+          Login
+        </button>
+
+        <p id="err" class="text-red-500 text-sm mt-4 text-center"></p>
+      </form>
+
+      <p class="text-center text-xs text-gray-400 mt-5">
+        Secure login powered by Supabase Authentication
+      </p>
+    </div>
+  </main>
+
+  <!-- APP -->
+  <div id="app" class="hidden min-h-screen">
+
+    <header class="sticky top-0 z-40 glass border-b border-gray-100">
+      <div class="max-w-7xl mx-auto px-5 sm:px-8 py-4">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <img
+              src="logo.png"
+              alt="Device Dokan Logo"
+              class="w-20 sm:w-24 h-auto shrink-0"
+              onerror="this.style.display='none'"
+            >
+            <div>
+              <h1 class="text-xl sm:text-2xl font-black">
+                DEVICE <span class="text-orange-500">DOKAN</span>
+              </h1>
+              <p class="text-xs sm:text-sm text-gray-500">
+                Admin • Product Management
+              </p>
+            </div>
+          </div>
+
+          <div class="flex gap-2 w-full sm:w-auto">
+            <a
+              href="index.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex-1 sm:flex-none text-center border border-gray-200 bg-white hover:bg-orange-50 px-4 py-2.5 rounded-xl font-semibold transition"
+            >
+              Website
+            </a>
+            <button
+              id="logoutButton"
+              type="button"
+              class="flex-1 sm:flex-none bg-gray-900 hover:bg-gray-800 text-white px-4 py-2.5 rounded-xl font-semibold transition"
+            >
+              Logout
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-5 sm:p-8">
+
+      <div class="mb-7">
+        <p class="text-orange-500 font-bold uppercase tracking-widest text-sm">Dashboard</p>
+        <h2 class="text-3xl sm:text-4xl font-black mt-1">Manage Products</h2>
+        <p class="text-gray-500 mt-2">
+          এখান থেকে Product add, edit, delete এবং stock status manage করুন।
+        </p>
+      </div>
+
+      <div id="message" class="hidden mb-5 rounded-2xl p-4 text-sm font-semibold"></div>
+
+      <div class="grid lg:grid-cols-3 gap-6">
+
+        <!-- FORM -->
+        <section class="bg-white rounded-[30px] p-6 sm:p-7 card border border-gray-100 lg:col-span-1">
+          <div class="flex items-center justify-between gap-3 mb-5">
+            <div>
+              <h3 id="formTitle" class="text-xl font-black">Add Product</h3>
+              <p class="text-sm text-gray-500 mt-1">Product information</p>
+            </div>
+            <span class="text-2xl">📱</span>
+          </div>
+
+          <form id="productForm">
+            <input type="hidden" id="id">
+
+            <label for="name" class="text-sm font-bold text-gray-700">Product Name</label>
+            <input id="name" required class="input w-full border border-gray-200 rounded-2xl p-3 mt-2 mb-4">
+
+            <label for="price" class="text-sm font-bold text-gray-700">Price (৳)</label>
+            <input id="price" type="number" min="0" step="0.01" required class="input w-full border border-gray-200 rounded-2xl p-3 mt-2 mb-4">
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="storage" class="text-sm font-bold text-gray-700">Storage</label>
+                <input id="storage" placeholder="256GB" class="input w-full border border-gray-200 rounded-2xl p-3 mt-2 mb-4">
+              </div>
+              <div>
+                <label for="ram" class="text-sm font-bold text-gray-700">RAM</label>
+                <input id="ram" placeholder="12GB" class="input w-full border border-gray-200 rounded-2xl p-3 mt-2 mb-4">
+              </div>
+            </div>
+
+            <label for="color" class="text-sm font-bold text-gray-700">Color</label>
+            <input id="color" class="input w-full border border-gray-200 rounded-2xl p-3 mt-2 mb-4">
+
+            <label for="description" class="text-sm font-bold text-gray-700">Description</label>
+            <textarea id="description" rows="4" class="input w-full border border-gray-200 rounded-2xl p-3 mt-2 mb-4"></textarea>
+
+            <label class="flex items-center gap-3 mb-5 cursor-pointer">
+              <input id="stock" type="checkbox" checked class="w-5 h-5 accent-orange-500">
+              <span class="font-bold text-sm">In Stock</span>
+            </label>
+
+            <label for="imageFile" class="text-sm font-bold text-gray-700">Product Image</label>
+            <input
+              id="imageFile"
+              type="file"
+              accept="image/*"
+              class="w-full border border-gray-200 rounded-2xl p-2.5 mt-2 mb-2 text-sm"
+            >
+            <p class="text-xs text-gray-400 mb-5">
+              নতুন image দিলে Supabase Storage-এ upload হবে।
+            </p>
+
+            <div class="flex gap-2">
+              <button
+                id="saveButton"
+                type="submit"
+                class="flex-1 bg-orange-500 hover:bg-orange-600 disabled:opacity-60 text-white p-3.5 rounded-2xl font-bold shadow-lg transition"
+              >
+                Save Product
+              </button>
+
+              <button
+                id="clearButton"
+                type="button"
+                class="px-5 border border-gray-200 hover:bg-gray-50 rounded-2xl font-semibold transition"
+              >
+                Clear
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- LIST -->
+        <section class="bg-white rounded-[30px] p-6 sm:p-7 card border border-gray-100 lg:col-span-2">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+            <div>
+              <h3 class="text-xl font-black">Products</h3>
+              <p class="text-sm text-gray-500 mt-1">Supabase Database-এর live product list</p>
+            </div>
+            <span id="count" class="self-start sm:self-auto bg-orange-50 text-orange-600 px-3 py-1.5 rounded-full text-sm font-bold">
+              0 products
+            </span>
+          </div>
+
+          <div id="list" class="space-y-3"></div>
+
+          <div id="emptyList" class="hidden text-center py-12">
+            <div class="text-5xl mb-3">📱</div>
+            <h4 class="text-xl font-bold text-gray-700">কোনো Product নেই</h4>
+            <p class="text-gray-500 mt-1">বাম পাশের form থেকে প্রথম Product যোগ করুন।</p>
+          </div>
+        </section>
+
+      </div>
+
+      <section class="mt-6 bg-orange-50 border border-orange-100 rounded-3xl p-5 text-sm text-orange-800">
+        <b>Database:</b> Supabase &nbsp;•&nbsp;
+        <b>Images:</b> Supabase Storage &nbsp;•&nbsp;
+        <b>Website:</b> Live database থেকে Product load করবে
+      </section>
+
+    </main>
   </div>
- </div>
- <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-2xl p-4 text-sm text-yellow-800">
-  এই version-এ product data এই browser-এর localStorage-এ রাখা হচ্ছে। ফলে এটি demo/initial version। সব device থেকে একই product দেখতে হলে Firebase/Supabase backend যুক্ত করতে হবে।
- </div>
-</div>
+
 <script>
-const USER="admin", PASS="DeviceDokan@2026";
-let products=load();
-function load(){try{return JSON.parse(localStorage.getItem("deviceDokanProducts"))||[]}catch(e){return[]}}
-function persist(){localStorage.setItem("deviceDokanProducts",JSON.stringify(products));render();}
-function login(e){e.preventDefault();if(user.value===USER&&pass.value===PASS){sessionStorage.setItem("ddAdmin","1");showApp()}else err.textContent="Username অথবা password ভুল।"}
-function showApp(){loginEl.classList.add("hidden");app.classList.remove("hidden");render()}
-function logout(){sessionStorage.removeItem("ddAdmin");location.reload()}
-const loginEl=document.getElementById("login");
-if(sessionStorage.getItem("ddAdmin")==="1")showApp();
-async function saveProduct(e){
- e.preventDefault();
- let image=document.getElementById("imageFile").files[0];
- let data={id:document.getElementById("id").value||Date.now().toString(),name:name.value,price:price.value,storage:storage.value,ram:ram.value,color:color.value,description:description.value,stock:stock.checked,image:""};
- const old=products.find(p=>p.id===data.id); if(old)data.image=old.image||"";
- if(image)data.image=await toDataURL(image);
- const i=products.findIndex(p=>p.id===data.id); if(i>=0)products[i]=data;else products.unshift(data);
- persist();resetForm();
-}
-function toDataURL(file){return new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
-function edit(id){let p=products.find(x=>x.id===id);if(!p)return;["id","name","price","storage","ram","color","description"].forEach(k=>document.getElementById(k).value=p[k]||"");stock.checked=p.stock!==false;document.getElementById("formTitle").textContent="Edit Product";scrollTo({top:0,behavior:"smooth"})}
-function del(id){if(confirm("এই product delete করবেন?")){products=products.filter(p=>p.id!==id);persist()}}
-function resetForm(){productForm.reset();id.value="";stock.checked=true;formTitle.textContent="Add Product"}
-function render(){count.textContent=products.length+" products";list.innerHTML=products.map(p=>`<div class="border rounded-2xl p-3 flex gap-3 items-center"><div class="w-16 h-16 rounded-xl bg-orange-50 overflow-hidden flex items-center justify-center">${p.image?`<img src="${p.image}" class="w-full h-full object-contain">`:"📱"}</div><div class="flex-1"><b>${esc(p.name)}</b><div class="text-orange-500">৳${Number(p.price||0).toLocaleString("en-IN")}</div><div class="text-xs text-gray-500">${p.stock===false?"Out of Stock":"In Stock"} • ${esc(p.storage||"")} ${esc(p.ram||"")}</div></div><button onclick="edit('${p.id}')" class="border px-3 py-2 rounded-xl">Edit</button><button onclick="del('${p.id}')" class="bg-red-500 text-white px-3 py-2 rounded-xl">Delete</button></div>`).join("")}
-function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+  // Device Dokan — Supabase connection
+  const SUPABASE_URL = 'https://yjebpbspzoxznfrbocpj.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_J31BYg60_pyPU7FzA9k2SA_vIsf2Ncu';
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+  let products = [];
+
+  const loginEl = document.getElementById('login');
+  const appEl = document.getElementById('app');
+  const loginForm = document.getElementById('loginForm');
+  const userEl = document.getElementById('user');
+  const passEl = document.getElementById('pass');
+  const loginButton = document.getElementById('loginButton');
+  const errEl = document.getElementById('err');
+
+  const productForm = document.getElementById('productForm');
+  const formTitle = document.getElementById('formTitle');
+  const saveButton = document.getElementById('saveButton');
+  const clearButton = document.getElementById('clearButton');
+
+  const listEl = document.getElementById('list');
+  const emptyListEl = document.getElementById('emptyList');
+  const countEl = document.getElementById('count');
+  const messageEl = document.getElementById('message');
+
+  function esc(value) {
+    return String(value ?? '').replace(
+      /[&<>"']/g,
+      (match) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      }[match])
+    );
+  }
+
+  function formatPrice(value) {
+    const amount = Number(value || 0);
+    return Number.isFinite(amount) ? amount.toLocaleString('en-IN') : '0';
+  }
+
+  function showMessage(text, type = 'success') {
+    messageEl.textContent = text;
+    messageEl.className =
+      'mb-5 rounded-2xl p-4 text-sm font-semibold ' +
+      (type === 'error'
+        ? 'bg-red-50 text-red-700 border border-red-100'
+        : 'bg-green-50 text-green-700 border border-green-100');
+  }
+
+  function hideMessage() {
+    messageEl.classList.add('hidden');
+  }
+
+  function setLoginLoading(loading) {
+    loginButton.disabled = loading;
+    loginButton.textContent = loading ? 'Logging in...' : 'Login';
+  }
+
+  async function login(event) {
+    event.preventDefault();
+    errEl.textContent = '';
+    setLoginLoading(true);
+
+    const email = userEl.value.trim();
+    const password = passEl.value;
+
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    setLoginLoading(false);
+
+    if (error) {
+      errEl.textContent = error.message;
+      return;
+    }
+
+    await showApp();
+  }
+
+  async function showApp() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+      loginEl.classList.remove('hidden');
+      appEl.classList.add('hidden');
+      return;
+    }
+
+    loginEl.classList.add('hidden');
+    appEl.classList.remove('hidden');
+    hideMessage();
+    await loadProducts();
+  }
+
+  async function logout() {
+    await supabaseClient.auth.signOut();
+    location.reload();
+  }
+
+  async function loadProducts() {
+    listEl.innerHTML = `
+      <div class="text-center py-10 text-gray-500">
+        <div class="w-8 h-8 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin mx-auto"></div>
+        <p class="mt-3 text-sm font-semibold">Loading products...</p>
+      </div>
+    `;
+
+    const { data, error } = await supabaseClient
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      listEl.innerHTML = '';
+      showMessage('Products load failed: ' + error.message, 'error');
+      return;
+    }
+
+    products = data || [];
+    render();
+  }
+
+  async function saveProduct(event) {
+    event.preventDefault();
+    hideMessage();
+
+    const id = document.getElementById('id').value.trim();
+    const imageFile = document.getElementById('imageFile').files[0];
+
+    saveButton.disabled = true;
+    saveButton.textContent = id ? 'Updating...' : 'Saving...';
+
+    try {
+      const oldProduct = products.find((product) => product.id === id);
+      let image_url = oldProduct?.image_url || '';
+
+      if (imageFile) {
+        const extension = imageFile.name.includes('.')
+          ? imageFile.name.split('.').pop().toLowerCase()
+          : 'jpg';
+
+        const filePath = `${crypto.randomUUID()}.${extension}`;
+
+        const { error: uploadError } = await supabaseClient.storage
+          .from('product-images')
+          .upload(filePath, imageFile, {
+            cacheControl: '3600',
+            upsert: false,
+            contentType: imageFile.type || undefined
+          });
+
+        if (uploadError) {
+          throw new Error('Image upload failed: ' + uploadError.message);
+        }
+
+        const { data: publicUrlData } = supabaseClient.storage
+          .from('product-images')
+          .getPublicUrl(filePath);
+
+        image_url = publicUrlData.publicUrl;
+      }
+
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        price: Number(document.getElementById('price').value),
+        storage: document.getElementById('storage').value.trim(),
+        ram: document.getElementById('ram').value.trim(),
+        color: document.getElementById('color').value.trim(),
+        description: document.getElementById('description').value.trim(),
+        stock: document.getElementById('stock').checked,
+        image_url
+      };
+
+      if (!payload.name) {
+        throw new Error('Product Name দিন।');
+      }
+
+      if (!Number.isFinite(payload.price) || payload.price < 0) {
+        throw new Error('সঠিক Price দিন।');
+      }
+
+      let error;
+
+      if (id) {
+        ({ error } = await supabaseClient
+          .from('products')
+          .update(payload)
+          .eq('id', id));
+      } else {
+        ({ error } = await supabaseClient
+          .from('products')
+          .insert(payload));
+      }
+
+      if (error) {
+        throw new Error('Database save failed: ' + error.message);
+      }
+
+      resetForm();
+      await loadProducts();
+      showMessage(id ? 'Product successfully updated.' : 'Product successfully added.');
+    } catch (error) {
+      console.error(error);
+      showMessage(error.message || 'Something went wrong.', 'error');
+    } finally {
+      saveButton.disabled = false;
+      saveButton.textContent = 'Save Product';
+    }
+  }
+
+  function editProduct(id) {
+    const product = products.find((item) => item.id === id);
+    if (!product) return;
+
+    document.getElementById('id').value = product.id;
+    document.getElementById('name').value = product.name || '';
+    document.getElementById('price').value = product.price ?? '';
+    document.getElementById('storage').value = product.storage || '';
+    document.getElementById('ram').value = product.ram || '';
+    document.getElementById('color').value = product.color || '';
+    document.getElementById('description').value = product.description || '';
+    document.getElementById('stock').checked = product.stock !== false;
+    document.getElementById('imageFile').value = '';
+
+    formTitle.textContent = 'Edit Product';
+    saveButton.textContent = 'Update Product';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function deleteProduct(id) {
+    const product = products.find((item) => item.id === id);
+    if (!product) return;
+
+    if (!confirm(`"${product.name}" delete করবেন?`)) return;
+
+    const { error } = await supabaseClient
+      .from('products')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      showMessage('Delete failed: ' + error.message, 'error');
+      return;
+    }
+
+    await loadProducts();
+    showMessage('Product successfully deleted.');
+  }
+
+  function resetForm() {
+    productForm.reset();
+    document.getElementById('id').value = '';
+    document.getElementById('stock').checked = true;
+    formTitle.textContent = 'Add Product';
+    saveButton.textContent = 'Save Product';
+  }
+
+  function render() {
+    countEl.textContent = `${products.length} products`;
+    listEl.innerHTML = '';
+    emptyListEl.classList.toggle('hidden', products.length > 0);
+
+    products.forEach((product) => {
+      const item = document.createElement('div');
+
+      item.className =
+        'border border-gray-100 rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row gap-4 sm:items-center hover:border-orange-100 transition';
+
+      const image = product.image_url
+        ? `<img src="${esc(product.image_url)}" alt="${esc(product.name)}" class="w-full h-full object-contain" loading="lazy">`
+        : `<span class="text-4xl">📱</span>`;
+
+      item.innerHTML = `
+        <div class="w-20 h-20 shrink-0 rounded-2xl bg-orange-50 overflow-hidden flex items-center justify-center">
+          ${image}
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-2">
+            <h4 class="font-black text-lg truncate">${esc(product.name)}</h4>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${
+              product.stock
+                ? 'bg-green-100 text-green-700'
+                : 'bg-gray-100 text-gray-600'
+            }">
+              ${product.stock ? 'In Stock' : 'Out of Stock'}
+            </span>
+          </div>
+
+          <p class="text-orange-500 font-black text-lg mt-1">
+            ৳${formatPrice(product.price)}
+          </p>
+
+          <p class="text-xs text-gray-500 mt-1">
+            ${esc(product.storage || '')}
+            ${product.storage && product.ram ? ' • ' : ''}
+            ${esc(product.ram || '')}
+            ${product.color ? ' • ' + esc(product.color) : ''}
+          </p>
+        </div>
+
+        <div class="flex gap-2 shrink-0">
+          <button
+            type="button"
+            data-action="edit"
+            data-id="${esc(product.id)}"
+            class="border border-gray-200 hover:bg-orange-50 hover:border-orange-200 px-4 py-2.5 rounded-xl font-semibold transition"
+          >
+            Edit
+          </button>
+
+          <button
+            type="button"
+            data-action="delete"
+            data-id="${esc(product.id)}"
+            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2.5 rounded-xl font-semibold transition"
+          >
+            Delete
+          </button>
+        </div>
+      `;
+
+      listEl.appendChild(item);
+    });
+  }
+
+  loginForm.addEventListener('submit', login);
+  document.getElementById('logoutButton').addEventListener('click', logout);
+  productForm.addEventListener('submit', saveProduct);
+  clearButton.addEventListener('click', resetForm);
+
+  listEl.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-action]');
+    if (!button) return;
+
+    const id = button.dataset.id;
+    if (button.dataset.action === 'edit') editProduct(id);
+    if (button.dataset.action === 'delete') deleteProduct(id);
+  });
+
+  showApp();
 </script>
-</body></html>
+</body>
+</html>
