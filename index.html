@@ -8,6 +8,7 @@
   <title>Device Dokan | Premium Smartphone Store</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     html { scroll-behavior: smooth; }
@@ -318,169 +319,130 @@
 </div>
 
 
+
 <script>
+  // Device Dokan — Supabase connection
+  const SUPABASE_URL = 'https://yjebpbspzoxznfrbocpj.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_J31BYg60_pyPU7FzA9k2SA_vIsf2Ncu';
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
   const WA = '8801336056864';
-
-  /*
-    IMPORTANT:
-    admin.html যদি deviceDokanProducts নামে localStorage-এ product save করে,
-    এই index.html সেই product automatically দেখাবে।
-  */
-
-  const defaults = [
-    {
-      id: '1',
-      name: 'iPhone 17 Pro Max',
-      price: '189999',
-      storage: '256GB',
-      ram: '12GB',
-      color: 'Natural Titanium',
-      stock: true,
-      description: 'Premium iPhone'
-    },
-    {
-      id: '2',
-      name: 'Samsung S26 Ultra',
-      price: '159999',
-      storage: '256GB',
-      ram: '12GB',
-      color: 'Black',
-      stock: true,
-      description: 'Samsung flagship'
-    },
-    {
-      id: '3',
-      name: 'iQOO 15',
-      price: '77000',
-      storage: '256GB',
-      ram: '12GB',
-      color: 'Black',
-      stock: true,
-      description: 'Powerful performance phone'
-    },
-    {
-      id: '4',
-      name: 'Xiaomi 16 Pro',
-      price: '69999',
-      storage: '256GB',
-      ram: '12GB',
-      color: 'Black',
-      stock: true,
-      description: 'Xiaomi flagship'
-    },
-    {
-      id: '5',
-      name: 'OnePlus 14',
-      price: '84999',
-      storage: '256GB',
-      ram: '12GB',
-      color: 'Black',
-      stock: true,
-      description: 'OnePlus flagship'
-    },
-    {
-      id: '6',
-      name: 'Google Pixel 10',
-      price: '92000',
-      storage: '256GB',
-      ram: '12GB',
-      color: 'Black',
-      stock: true,
-      description: 'Google Pixel'
-    }
-  ];
-
-
-  function products() {
-    try {
-      const saved = localStorage.getItem('deviceDokanProducts');
-
-      if (saved) {
-        const parsed = JSON.parse(saved);
-
-        if (Array.isArray(parsed)) {
-          return parsed;
-        }
-      }
-    } catch (error) {
-      console.error('Product data error:', error);
-    }
-
-    return defaults;
-  }
-
 
   function esc(value) {
     return String(value ?? '').replace(
       /[&<>"']/g,
-      function (match) {
-        return {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#039;'
-        }[match];
-      }
+      (match) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      }[match])
     );
   }
 
+  function formatPrice(value) {
+    const amount = Number(value || 0);
+    return Number.isFinite(amount)
+      ? amount.toLocaleString('en-IN')
+      : '0';
+  }
 
   function order(product) {
-    const price = Number(product.price || 0).toLocaleString('en-IN');
-
     const message =
       `আমি ${product.name} অর্ডার করতে চাই।\n` +
-      `Price: ৳${price}\n` +
+      `Price: ৳${formatPrice(product.price)}\n` +
       `Storage: ${product.storage || 'N/A'}\n` +
       `RAM: ${product.ram || 'N/A'}\n` +
       `Color: ${product.color || 'N/A'}`;
 
     const url =
-      'https://wa.me/' +
-      WA +
-      '?text=' +
-      encodeURIComponent(message);
+      'https://wa.me/' + WA + '?text=' + encodeURIComponent(message);
 
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
+  async function getProducts() {
+    const { data, error } = await supabaseClient
+      .from('products')
+      .select('id,name,price,storage,ram,color,description,stock,image_url,created_at')
+      .eq('stock', true)
+      .order('created_at', { ascending: false });
 
-  function render() {
+    if (error) {
+      console.error('Supabase product load error:', error);
+      return { data: [], error };
+    }
+
+    return { data: data || [], error: null };
+  }
+
+  function showLoading() {
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = `
+      <div class="col-span-full flex flex-col items-center justify-center py-16 text-center">
+        <div class="w-10 h-10 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin"></div>
+        <p class="mt-4 text-gray-500 font-semibold">Products loading...</p>
+      </div>
+    `;
+  }
+
+  function showLoadError() {
     const grid = document.getElementById('productGrid');
     const empty = document.getElementById('empty');
 
-    const ps = products().filter(function (product) {
-      return product && product.stock !== false;
-    });
+    grid.innerHTML = `
+      <div class="col-span-full rounded-3xl border border-red-100 bg-red-50 p-7 text-center">
+        <div class="text-4xl mb-3">⚠️</div>
+        <h4 class="text-xl font-bold text-red-700">Products load করা যাচ্ছে না</h4>
+        <p class="text-red-600 mt-2">
+          Supabase connection বা database policy check করুন।
+        </p>
+        <button
+          type="button"
+          id="retryProducts"
+          class="mt-5 bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-2xl font-bold"
+        >
+          আবার চেষ্টা করুন
+        </button>
+      </div>
+    `;
+
+    empty.classList.add('hidden');
+
+    document.getElementById('retryProducts')
+      .addEventListener('click', render);
+  }
+
+  function renderProducts(products) {
+    const grid = document.getElementById('productGrid');
+    const empty = document.getElementById('empty');
 
     grid.innerHTML = '';
+    empty.classList.toggle('hidden', products.length > 0);
 
-    empty.classList.toggle('hidden', ps.length > 0);
-
-    ps.forEach(function (product) {
-
-      const card = document.createElement('div');
+    products.forEach((product) => {
+      const card = document.createElement('article');
 
       card.className =
         'product-card bg-white rounded-[30px] shadow-md border border-gray-100 p-5 overflow-hidden';
 
-      let imageHTML = '';
-
-      if (product.image) {
-        imageHTML =
-          `<img
-            src="${esc(product.image)}"
+      const imageHTML = product.image_url
+        ? `
+          <img
+            src="${esc(product.image_url)}"
             class="w-full h-full object-contain p-4"
             alt="${esc(product.name)}"
             loading="lazy"
             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
           >
-          <span class="hidden text-7xl items-center justify-center w-full h-full">📱</span>`;
-      } else {
-        imageHTML =
-          `<span class="text-7xl">📱</span>`;
-      }
+          <span class="hidden text-7xl items-center justify-center w-full h-full">📱</span>
+        `
+        : `<span class="text-7xl">📱</span>`;
 
       const details = [
         product.storage ? esc(product.storage) : '',
@@ -498,21 +460,16 @@
             <h4 class="text-xl sm:text-2xl font-black leading-tight">
               ${esc(product.name)}
             </h4>
-
             <span class="shrink-0 text-xs font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full">
               In Stock
             </span>
           </div>
 
           <p class="text-orange-500 text-2xl font-black mt-3">
-            ৳${Number(product.price || 0).toLocaleString('en-IN')}
+            ৳${formatPrice(product.price)}
           </p>
 
-          ${
-            details
-              ? `<p class="text-gray-500 text-sm mt-2">${details}</p>`
-              : ''
-          }
+          ${details ? `<p class="text-gray-500 text-sm mt-2">${details}</p>` : ''}
 
           ${
             product.description
@@ -529,9 +486,7 @@
         </div>
       `;
 
-      const button = card.querySelector('button');
-
-      button.addEventListener('click', function () {
+      card.querySelector('button').addEventListener('click', () => {
         order(product);
       });
 
@@ -539,11 +494,23 @@
     });
   }
 
+  async function render() {
+    showLoading();
+
+    const result = await getProducts();
+
+    if (result.error) {
+      showLoadError();
+      return;
+    }
+
+    renderProducts(result.data);
+  }
 
   document.getElementById('year').textContent = new Date().getFullYear();
-
   render();
 </script>
+
 
 </body>
 </html>
